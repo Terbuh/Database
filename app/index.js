@@ -6,9 +6,9 @@ const companiesURL = 'http://localhost:' + port + '/companies';
 
 let usersList = [];
 let companiesList = [];
-let companyUsers = [];
 
 window.onload = () => {
+
   fetch(usersURL)
     .then(response => response.json()) // zmiana danych do jsona
     .then(userData => {
@@ -21,29 +21,33 @@ window.onload = () => {
           companyNumber: userData[i].uris.company.substring(11)
         });
       }
-      console.log('User' + 0 + ':', usersList[0]);
 
-    });
+      fetch(companiesURL)
+        .then(response => response.json())
+        .then(companiesData => {
+          console.log('#Full companies data: ', companiesData);
+          for (let i = 0; i < companiesData.length; i++) {
+            companiesList.push({
+              name: companiesData[i].name,
+              uri: companiesData[i].uri,
+              users: new Array()
+            });
+          }
 
-  fetch(companiesURL)
-    .then(response => response.json()) // zmiana danych do jsona
-    .then(companiesData => {
-      console.log('#Full companies data: ', companiesData);
-      for (let i = 0; i < companiesData.length; i++) {
-        companiesList.push({
-          name: companiesData[i].name,
-          uri: companiesData[i].uri,
-          users: companyUsers
+        })
+        .then(() => {
+          for(let i = 0; i < usersList.length; i++) {
+            const userIndex = usersList[i].companyNumber;
+            const userName = usersList[i].name;
+            companiesList[userIndex].users.push(userName);
+          }
+          console.log('#Test Company' + 124 + ':', companiesList[124]);
         });
-      }
 
-      console.log('Company' + 0 + ':', companiesList[0]);
-
-      for(let i = 0; i < usersList.length; i++) {
-        companiesList[usersList[i].companyNumber].users.push(usersList[i].name);
-      }
-      console.log('Company' + 0 + ':', companiesList[0]);
     });
+
+
+
 
 
 };
