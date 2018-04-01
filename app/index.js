@@ -42,6 +42,32 @@ window.onload = () => {
             companiesList[userIndex].users.push(userName);
           }
           console.log('#Test Company' + 124 + ':', companiesList[124]);
+        })
+        .then(() => {
+          let tableText = '<table class="table">\n' +
+                '  <thead>\n' +
+                '    <tr>\n' +
+                '      <th scope="col">Index</th>\n' +
+                '      <th scope="col">Company Name</th>\n' +
+                '      <th scope="col">URI</th>\n' +
+                '      <th scope="col">Users</th>\n' +
+                '    </tr>\n' +
+                '  </thead>\n' +
+                '  <tbody>';
+
+          for(let i = 0; i < companiesList.length; i++) {
+            tableText = tableText +
+                  '<tr>\n' +
+                  '      <th scope="row">'+ i +'</th>\n' +
+                  '      <td>'+ companiesList[i].name +'</td>\n' +
+                  '      <td>'+ companiesList[i].uri +'</td>\n' +
+                  '      <td>'+ companiesList[i].users +'</td>\n' +
+                  '</tr>';
+          }
+
+          tableText = tableText + '</tbody>\n' + '</table>';
+          document.getElementById('table').innerHTML = tableText;
+
         });
 
     });
