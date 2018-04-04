@@ -1,5 +1,5 @@
 import './styles/styles.scss';
-/*exported toggleUsers */
+
 const port = 3000;
 const usersURL = 'http://localhost:' + port + '/users';
 const companiesURL = 'http://localhost:' + port + '/companies';
@@ -21,7 +21,7 @@ const tableEnd =
     '  </tbody>\n' +
     '</table>';
 
-const hideRow = 'style="display: none"';
+const hideRow = 'style="display:none"';
 
 window.onload = () => {
 
@@ -58,31 +58,49 @@ window.onload = () => {
 
         .then( () => {
 
-          for(let i = 0; i < usersList.length; i++) {
+          for (let i = 0; i < usersList.length; i++) {
             const userIndex = usersList[i].companyNumber;
             const userName = usersList[i].name;
             companiesList[userIndex].users.push(userName);
           }
+
+          companiesList.sort((a, b) => {
+
+            let firstUsers = a.users.length;
+            let secondUsers = b.users.length;
+
+            if ( firstUsers > secondUsers) {
+              return -1;
+            }
+
+            else if ( firstUsers < secondUsers) {
+              return 1;
+            }
+
+            return 0;
+
+          });
         })
 
         .then(() => {
 
           let tableText = tableStart;
 
-          for(let i = 0; i < companiesList.length; i++) {
+          for (let i = 0; i < companiesList.length; i++) {
             tableText +=
-                  '<tr >\n' +
+                  '<tr class="table-light">\n' +
                   '      <td>'+ i +'</td>\n' +
                   '      <td>'+ companiesList[i].name +'</td>\n' +
                   '      <td>'+ companiesList[i].uri +'</td>\n' +
                   '</tr>';
 
-            if(companiesList[i].users.length > 0) {
+            if (companiesList[i].users.length > 0) {
 
               for(let j = 0; j < companiesList[i].users.length; j++) {
+                let rowId = i + '.' + (j+1);
                 tableText +=
-                    '<tr class="table-active" ' + hideRow + '>\n' +
-                    '    <td>' + i + '.' + (j+1) +  '</td>\n' +
+                    '<tr id="' + rowId + '" class="table-active" ' + hideRow + '>\n' +
+                    '    <td>' + rowId + '</td>\n' +
                     '    <td colspan="2">'+ companiesList[i].users[j] +'</td>\n' +
                     '</tr>\n';
               }
@@ -92,31 +110,38 @@ window.onload = () => {
 
           tableText += tableEnd;
           document.getElementById('table').innerHTML = tableText;
-          addRowHandlers();
+          addRowEvents();
 
         });
 
     });
 
-
-
 };
 
-function addRowHandlers() {
+function addRowEvents() {
 
   let table = document.getElementById('companiesTable');
-  let rows = table.getElementsByTagName('tr');
-  for (let i = 0; i < rows.length; i++) {
-    let currentRow = table.rows[i];
-    let createClickHandler = row => {
+  let companyRows = table.getElementsByClassName('table-light');
+
+  console.log('company rows = ' + companyRows.length + '\n');
+
+  for (let i = 0; i < companyRows.length; i++) {
+
+    let currentCompanyRow = companyRows[i];
+    let toggleRowUsers = row => {
       return () => {
-        let cell = row.getElementsByTagName('td')[0];
-        let id = cell.innerHTML;
-        alert('id:' + id);
+        let selectedRowIndex = row.getElementsByTagName('td')[0].innerHTML;
+        let selectedRowUsers = companiesList[selectedRowIndex].users.length;
+
+        for (let j = 0; j < selectedRowUsers; j++) {
+          let childrenRowId = selectedRowIndex + '.' + (j+1);
+          document.getElementById(childrenRowId).style.display = document.getElementById(childrenRowId).style.display == 'none' ? '' : 'none';
+        }
+
       };
     };
 
-    currentRow.onclick = createClickHandler(currentRow);
+    currentCompanyRow.onclick = toggleRowUsers(currentCompanyRow);
   }
 
 }
