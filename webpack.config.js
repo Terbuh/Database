@@ -17,7 +17,7 @@ module.exports = {
         exclude: /node_modules/
       },
       {
-        test: /\.js$/, loader: "eslint-loader", exclude: /node_modules/
+        test: /\.js$/, loader: 'eslint-loader', exclude: /node_modules/
       },
       {
         test: /\.scss$/,
@@ -25,11 +25,11 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader']
+        use: ['style-loader', 'css-loader', 'postcss-loader']
       },
       {
         test: /\.(ttf|eot|woff|woff2)$/,
-        loader: "url-loader?limit=10000&minetype=application/font-woff"
+        loader: 'url-loader?limit=10000&minetype=application/font-woff'
       },
       {
         test: /\.(jpe?g|png|gif|svg)$/,
